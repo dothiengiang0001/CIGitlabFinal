@@ -1,0 +1,146 @@
+version: '3.8'
+
+services:
+  # database section
+  productdb:
+    image: mysql:8.3.0
+
+  # customerdb:
+  #   image: postgres:alpine3.16
+  #   networks:
+  #       - tedu_microservices
+
+  # orderdb:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   networks:
+  #       - tedu_microservices
+    
+  # basketdb:
+  #   image: redis:alpine
+  #   networks:
+  #       - tedu_microservices
+
+  # inventorydb:
+  #   image: mongo
+  #   networks:
+  #       - tedu_microservices
+  
+  # hangfiredb:
+  #   image: mongo
+  #   networks:
+  #       - tedu_microservices
+
+  # infrastructure section
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   networks:
+  #       - tedu_microservices
+  
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   networks:
+  #       - tedu_microservices
+
+  # portainer:
+  #   image: portainer/portainer-ce
+  #   networks:
+  #       - tedu_microservices
+
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.17.2
+  #   networks:
+  #       - tedu_microservices
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:7.17.2
+  #   networks:
+  #       - tedu_microservices
+    
+  # microservices api section
+  product.api:
+    image: ${DOCKER_REGISTRY-}product-api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Services/Product/Product.API/Dockerfile
+    
+  # customer.api:
+  #   image: ${DOCKER_REGISTRY-}customer-api:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Customer/Customer.API/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+  
+  # basket.api:
+  #   image: ${DOCKER_REGISTRY-}basket-api:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Basket/Basket.API/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+
+  # ordering.api:
+  #   image: ${DOCKER_REGISTRY-}ordering-api:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Ordering/Ordering.API/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+  
+  # inventory.product.api:
+  #   image: ${DOCKER_REGISTRY-}inventory-product-api:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Inventory/Inventory.Product.API/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+  
+  # apigw.ocelot:
+  #   image: ${DOCKER_REGISTRY-}apigw-ocelot:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: ApiGateways/OcelotApiGw/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+
+  # hangfire.api:
+  #   image: ${DOCKER_REGISTRY-}hangfire-api:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: Services/ScheduledJob/Hangfire.API/Dockerfile
+  #   networks:
+  #       - tedu_microservices
+  
+  # webstatus:
+  #   image: ${DOCKER_REGISTRY-}webstatus:${PLATFORM:-linux}-${TAG:-latest}
+  #   build:
+  #     context: .
+  #     dockerfile: WebApps/WebHealthStatus/Dockerfile
+
+    
+#network section
+networks:
+  default:
+    name: tedu_microservices
+    driver: bridge
+
+# volumes section
+volumes:
+  # sqlserver_data:
+  #   name: sqlserver_data
+  mysql_data:
+    name: mysql_data
+  # postgres_data:
+  #   name: postgres_data
+  # portainer_data:
+  #   name: portainer_data
+  # elasticsearch_data:
+  #   name: elasticsearch_data
+  # jaeger_data:
+  #   name: jaeger_data
+  # mongo_data:
+  #   name: mongo_data
+  # hangfire_mongo_data:
+  #   name: hangfire_mongo_data
+  # pgadmin_data:
+  #   name: pgadmin_data

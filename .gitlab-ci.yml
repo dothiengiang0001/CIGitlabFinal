@@ -1,0 +1,37 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE_NAME: "dothiengiang0001/EcommerceMicroserviceLearning"
+  DOCKER_REGISTRY: "registry.hub.docker.com"
+
+before_script:
+  - export ASPNETCORE_ENVIRONMENT=Production
+
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:latest
+  script:
+    - cd ./src/Services/Product
+    - dotnet restore "./Product.API/Product.API.csproj"
+    - dotnet restore "./Product.Application/Product.Application.csproj"
+    - dotnet restore "./Product.Domain/Product.Domain.csproj"
+    - dotnet restore "./Product.Infrastructure/Product.Infrastructure.csproj"
+    - dotnet build "./Product.API/Product.API.csproj" -c Release -o /app/build/Product.API
+    - dotnet build "./Product.Application/Product.Application.csproj" -c Release -o /app/build/Product.Application
+    - dotnet build "./Product.Domain/Product.Domain.csproj" -c Release -o /app/build/Product.Domain
+    - dotnet build "./Product.Infrastructure/Product.Infrastructure.csproj" -c Release -o /app/build/Product.Infrastructure
+
+deploy:
+  stage: deploy
+  image: docker:latest  # Thêm hình ảnh Docker vào đây
+  services:
+    - docker:dind
+  only:
+    - master
+  script:
+    - cd ./src/Services/Product/Product.API
+    - docker build -t ${DOCKER_REGISTRY-}product-api:${PLATFORM:-linux}-${TAG:-latest} .
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+    - docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
